@@ -19,6 +19,8 @@ class Bio extends React.Component {
   constructor(props) {
     super(props);
 
+    this.state = {error: props.error};
+
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleClose = this.handleClose.bind(this);
@@ -28,6 +30,7 @@ class Bio extends React.Component {
   handleChange(e) {
     const { name, value } = e.target;
     this.props.changeHandler(name, value);
+    this.validate(value);
   }
 
   handleSubmit(e) {
@@ -43,9 +46,17 @@ class Bio extends React.Component {
     this.props.openHandler(this.props.formId);
   }
 
+  validate(value) {
+    if (value.length > 300) {
+      this.setState({error: 'About me is too long!'});
+    } else {
+      this.setState({error: null});
+    }
+  }
+
   render() {
     const {
-      formId, bio, visibilityBio, editMode, saveState, error, intl,
+      formId, bio, visibilityBio, editMode, saveState, intl,
     } = this.props;
 
     return (
@@ -65,11 +76,11 @@ class Bio extends React.Component {
                     id={formId}
                     name={formId}
                     value={bio || ''}
-                    invalid={error != null}
+                    invalid={this.state.error != null}
                     onChange={this.handleChange}
                     aria-describedby={`${formId}-error-feedback`}
                   />
-                  <FormFeedback id={`${formId}-error-feedback`}>{error}</FormFeedback>
+                  <FormFeedback id={`${formId}-error-feedback`}>{this.state.error}</FormFeedback>
                 </FormGroup>
                 <FormControls
                   visibilityId="visibilityBio"
